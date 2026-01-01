@@ -1,41 +1,39 @@
-const API_URL = "http://localhost:5050/tasks";
-
-// Load tasks when page opens
 async function loadTasks() {
-  const response = await fetch(API_URL);
-  const tasks = await response.json();
+  const res = await fetch("/tasks");
+  const tasks = await res.json();
 
   const list = document.getElementById("taskList");
   list.innerHTML = "";
 
   tasks.forEach(task => {
     const li = document.createElement("li");
-    li.textContent = task.title;
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = task.completed;
+
+    checkbox.onclick = async () => {
+      await fetch(`/tasks/${task._id}`, { method: "PATCH" });
+      loadTasks();
+    };
+
+    li.appendChild(checkbox);
+    li.append(" " + task.title);
     list.appendChild(li);
   });
 }
 
-// Add new task
 async function addTask() {
   const input = document.getElementById("taskInput");
-  const title = input.value.trim();
 
-  if (!title) {
-    alert("Please enter a task");
-    return;
-  }
-
-  await fetch(API_URL, {
+  await fetch("/tasks", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ title })
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title: input.value })
   });
 
   input.value = "";
   loadTasks();
 }
 
-// Load tasks on page load
 loadTasks();
