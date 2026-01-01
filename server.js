@@ -2,6 +2,8 @@ const express = require("express");
 const { MongoClient } = require("mongodb");
 
 const app = express();
+app.use(express.static("public"));
+
 const PORT = 5050;
 
 // Middleware
