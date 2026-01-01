@@ -1,0 +1,13 @@
+services:
+  app:
+    build: .
+    ports:
+      - "5050:5050"
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:6.0
+    platform: linux/amd64
+    ports:
+      - "27017:27017"
